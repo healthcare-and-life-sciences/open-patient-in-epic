@@ -1,4 +1,4 @@
-[Image: Screen Shot 2022-05-09 at 6.55.56 PM.png]
+![](/images/Image1.png)
 <h1>A-HLS Open Patient in Epic Documentation </h1>
 
 <h2>Overview</h2>
@@ -16,7 +16,7 @@ The Accelerator gives the user a choice of context for which to view the patient
 * Log Phone Call
 * (Pre-selected by default) Default Patient Context - this represents a blank context which will trigger a default documentation activity configured by the organization.
 
-[Image: Screen Shot 2022-10-31 at 2.33.31 PM.png]
+![](/images/image2.png)
 
 <h2>Business Objective</h2>
 
@@ -110,10 +110,11 @@ Static Resources - CSS (1)
     1. Open the Epic Button OmniScript
     2. To configure different images or labels for the Context, select the Radio Button element in the OmniScript
 
-[Image: Screen Shot 2022-10-31 at 2.47.24 PM.png]c. Click on each option title to configure the label and desired image. 
+![](/images/image3.png)
+c. Click on each option title to configure the label and desired image. 
 d. Activate the OmniScript
 e. For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
-[Image: Screen Shot 2022-10-31 at 2.48.08 PM.png]
+![](/images/image4.png)
 
 1. Add the installed OmniScript to the lightning page layout of your choosing. 
     1. Refer to this article for more information regarding adding OmniScripts to a Lightning or Experience page: https://docs.vlocity.com/en/Adding-an-LWC-OmniScript-to-a-Community-or-Lightning-Page.html
@@ -124,25 +125,25 @@ e. For more information regarding activating Omniscripts, please see this articl
     1. On the “*Output*” panel, set the *Extract JSON Path* to the User ID field which stores the User’s Epic User ID 
     2. By default, the DataRaptor uses the *FederationIdentifier* field on the User object in Salesforce.
 
-[Image: Screen Shot 2022-10-31 at 2.21.48 PM.png]
+![](/images/image5.png)
 1. To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor
     1. On the “*Output*” panel, set the *Extract JSON Path* to the Account field which stores the Epic patient ID
     2. By default, this is set to *Account.HealthCloudGA__SourceSystemId__c* on the Account object.
 
-[Image: Screen Shot 2022-10-31 at 2.21.25 PM.png]
+![](/images/image6.png)
 <h5>Configure Additional API Parameters</h5>
 
 1. To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure.
 2. Either deactivate or create a new version of the Integration Procedure to edit it.
 3. Click on the SetAPIParameters and configure the values according to your business needs. For more information on parameters for the Receive Communication API, refer to the Epic documentation here: https://open.epic.com/Operational/ContactCenter
 
-[Image: Screen Shot 2022-10-31 at 2.20.59 PM.png]
+![](/images/image7.png)
 1. Next, set the Epic Receive Communication API endpoint by doing the following:
     1. Click on CallEpicReceiveCommunicationAPI
     2. Add your organization’s unique API domain name before the existing text. For example: https://interconnect.makanahealth.com/wcf/Epic.Common.GeneratedServices/Utility.svc/rest_2015/ReceiveCommunication
     3. Add any additional Input Keys and Values according to your organization’s requirements (e.g., authentication keys). Work with your Epic administrator to determine additional needs.
 
-[Image: Screen Shot 2022-10-31 at 2.30.25 PM.png]
+![](/images/image8.png)
 1. Activate the Integration Procedure.
 
 
