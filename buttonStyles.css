@@ -1,0 +1,7 @@
+.slds-img-item_select-container.slds-img_option-width-height:hover {
+	background-color: #f3f3f3;
+}
+.slds-img_no-width-height[vlocity_ins-radioImageGroup_radioImageGroup_slds] {
+	border-radius: 0.25rem;
+	border-color: #c9c9c9;
+}
