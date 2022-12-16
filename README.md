@@ -154,6 +154,9 @@ e. For more information regarding activating Omniscripts, please see this articl
 3. Data Model elements that are part of the HINS (Vlocity) Managed package and Health Cloud are all available.
 4. The Accelerator uses the Lightning Design System standards and look. Customers may want to apply their own branding which can be achieved.
 5. A customer is live on Epic and has appropriate administrator resources to complete any required Epic configuration.
+6. This tool is intended to provide capabilities for Customers to configure and optimize use of their implemented Salesforce Services. Customers should ensure that their use of this tool meets their own use case needs and compliance requirements (including any applicable healthcare and privacy laws, rules, and regulations).
+7. Customers that use software, APIs, or other products from Epic may be subject to additional terms and conditions, including, without limitation, Epic's open.epic API Subscription Agreement terms.
+8. Epic is a trademarks of Epic Systems Corporation.
 
 
 <h2>Revision History</h2>
