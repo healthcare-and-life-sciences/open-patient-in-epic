@@ -216,4 +216,5 @@ Static Resources - CSS (1)
 * *Revision Short Description (Month Day, Year)*
 
     * Initial Commit (October 31, 2022)
+    * Updated to include Epic authentication configuration from Salesforce to Epic directly (May 4, 2023)
 
