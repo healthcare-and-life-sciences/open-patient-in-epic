@@ -80,19 +80,44 @@ Static Resources - CSS (1)
 <h2>Configuration Requirements</h2>
 
 <h3>Pre-Install Configuration Steps:</h3>
+1. **EHR Pre-Configuration Steps:**
+    1. Work with your Epic Administrator in order to activate the Receive Communication API web service. 
+2. **Salesforce Pre-Installation Steps:**
+    1. Ensure your Salesforce Health Cloud org has Vlocity OmniStudio or Core OmniStudio installed.
+        1. To verify installation, please navigate to Setup > Installed Packages > OmniStudio.
+    2. Enable Identity Provider according to these steps: https://help.salesforce.com/s/articleView?id=sf.identity_provider_enable.htm&type=5
+    3. Create Custom Metadata for Authentication Provider:
+        1. Setup > Custom Metadata Types
+        2. New Metadata Type - ensure it is named **“ClientCredentialsJWT”**
+        3. Add the following Custom fields. All fields should be “Text” fields with a length of 255 characters.
+            1. aud
+            2. callback uri
+            3. cert
+            4. iss
+            5. jti
+            6. sub
 
-1. Work with your Epic Administrator in order to activate the Receive Communication API web service. 
-2. Configure the Remote Site Settings in Salesforce in order to enable calls between Salesforce and Epic. More information can be found here: https://help.salesforce.com/s/articleView?id=sf.configuring_remoteproxy.htm&type=5
+![](/images/fcimage2.png)
 
 <h4>Install the Data Pack</h4>
 
-1. Follow the download steps presented on the Accelerate HLS website for this Accelerator. 
-    1. Alternatively, you may download the Data Pack folder in the following GitHub repository: https://github.com/healthcare-and-life-sciences/open-patient-in-epic
-2. Then, complete the following steps to import them into your Salesforce org.
-    1. To Import, in your destination Salesforce org, Click on *App Launcher* → Search for '*OmniStudio DataPacks*' and click on it.
-    2. Click on '*Installed*' and on the right side click on '*Import from*'.
-    3. Select '*From File*' - When the window opens, select the Data Pack file that you downloaded and stored on your machine. Click '*Install*'.
-    4. When prompted to Activate the OmniScript, choose *Not Now*.
+1. Follow the download steps in the "Download Now" flow presented on the HLS Accelerators website for this Accelerator which downloads the following GitHub repository on your machine: https://hlsaccelerators.developer.salesforce.com/s/bundle/a9E5f000000PL7fEAG/open-patient-in-epic-button
+2. Unzip the resulting .zip file which is downloaded to your machine. 
+3. Open the “OmniStudio” folder
+    1. If you have the Vlocity_ins package installed in your org, open the folder titled “Vlocity Version”.
+    2. If you have Core OmniStudio installed in your org, open the folder titled "OmniStudio Version".
+    3. Install the DataPack into your org. 
+        1. Click on App Launcher → Search for 'OmniStudio DataPacks' and click on it.
+        2. Click on 'Installed' > Import > From File
+        3. When the window opens, select the json file identified in the previous step. Click 'Open' then click 'Next' 3 times.
+        4. When prompted, click "Activate Now".
+
+4. Open the “salesforce-sfdx” folder. Use IDX or sfdx to install the files under the “salesforce-sfdx” folder.
+5. To access the IDX workbench, please navigate to this URL: https://workbench.developerforce.com/login.php
+6. For more information regarding IDX, please review this Trailhead: https://trailhead.salesforce.com/content/learn/modules/omnistudio-developer-tools
+7. Import the keystore FHIRDEMOKEYSTORE.jks from .zip file
+    1. Setup > Certificates and Key Management > Import from Keystore
+    2. Password: salesforce1
 
 <h4>Post-Install Configuration Steps:</h4>
 
@@ -106,45 +131,72 @@ Static Resources - CSS (1)
 
 <h5>Configure and Activate the OmniScript</h5>
 
-1. Click on *App Launcher* → Search for “OmniScripts”
+1. Create a new Authentication Provider
+    1. Setup > Auth Providers
+    2. Create a New Authentication Provider
+        1. Provider Type: **ClientCredentialJWT**
+        2. Name: Epic_JWT_Auth
+        3. iss: 43b0500b-ea80-41d4-be83-21230c837c15
+        4. sub: 43b0500b-ea80-41d4-be83-21230c837c15
+        5. aud: set this to the API endpoint for authentication - either the MuleSoft API or Epic FHIR API - e.g., https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token
+        6. jti: salesforce
+        7. cert: fhirdemo_cert
+        8. callback uri: https://YOURDOMAIN/services/authcallback/Epic_JWT_Auth
+        9. Execute Registration As: your system administrator User
+![](/images/fcimage3.png)
+2. **Add your API endpoint to Remote Site Settings**
+    1. Setup > Remote Site Settings > New
+    2. Give the Remote Site a name and paste the domain of the API endpoint into the URL field.
+    3. Click Save.
+3. **Create a new Named Credential**
+    1. Setup > Named Credential > New Legacy
+        1. Name: Must be **Epic Auth JWT**
+        2. URL: the URL of the endpoint you are going to connect to. For example, https://fhir.epic.com/interconnect-fhir-oauth/ 
+        3. Identity Type: Named Principal
+        4. Authentication Protocol: OAuth 2.0
+        5. Authentication Provider: the name of your Authentication Provider above
+        6. “Run Authentication Flow on Save”: Checked
+![](/images/fcimage4.png)
+
+4. Click on *App Launcher* → Search for “OmniScripts”
     1. Open the Epic Button OmniScript
     2. To configure different images or labels for the Context, select the Radio Button element in the OmniScript
 
 ![](/images/image3.png)
-c. Click on each option title to configure the label and desired image. 
-d. Activate the OmniScript
-e. For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
+       c. Click on each option title to configure the label and desired image. 
+       d. Activate the OmniScript
+       e. For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
 ![](/images/image4.png)
 
-1. Add the installed OmniScript to the lightning page layout of your choosing. 
+5. Add the installed OmniScript to the lightning page layout of your choosing. 
     1. Refer to this article for more information regarding adding OmniScripts to a Lightning or Experience page: https://docs.vlocity.com/en/Adding-an-LWC-OmniScript-to-a-Community-or-Lightning-Page.html
 
 <h5>Configure User and Patient API Input Parameters:</h5>
 
-1. To configure the *User ID Type* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor
+6. To configure the *User ID* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor
     1. On the “*Output*” panel, set the *Extract JSON Path* to the User ID field which stores the User’s Epic User ID 
     2. By default, the DataRaptor uses the *FederationIdentifier* field on the User object in Salesforce.
 
 ![](/images/image5.png)
-1. To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor
+7. To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor
     1. On the “*Output*” panel, set the *Extract JSON Path* to the Account field which stores the Epic patient ID
     2. By default, this is set to *Account.HealthCloudGA__SourceSystemId__c* on the Account object.
 
 ![](/images/image6.png)
 <h5>Configure Additional API Parameters</h5>
 
-1. To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure.
-2. Either deactivate or create a new version of the Integration Procedure to edit it.
-3. Click on the SetAPIParameters and configure the values according to your business needs. For more information on parameters for the Receive Communication API, refer to the Epic documentation here: https://open.epic.com/Operational/ContactCenter
+8. To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure.
+   1. Either deactivate or create a new version of the Integration Procedure to edit it.
+   2. Click on the SetAPIParameters and configure the values according to your business needs. For more information on parameters for the Receive Communication API, refer to the Epic documentation here: https://open.epic.com/Operational/ContactCenter
 
 ![](/images/image7.png)
-1. Next, set the Epic Receive Communication API endpoint by doing the following:
+9. Next, set the Epic Receive Communication API endpoint by doing the following:
     1. Click on CallEpicReceiveCommunicationAPI
     2. Add your organization’s unique API domain name before the existing text. For example: https://interconnect.makanahealth.com/wcf/Epic.Common.GeneratedServices/Utility.svc/rest_2015/ReceiveCommunication
     3. Add any additional Input Keys and Values according to your organization’s requirements (e.g., authentication keys). Work with your Epic administrator to determine additional needs.
 
 ![](/images/image8.png)
-1. Activate the Integration Procedure.
+10. Activate the Integration Procedure.
 
 
 <h2>Assumptions</h2>
