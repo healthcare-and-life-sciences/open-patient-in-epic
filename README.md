@@ -249,6 +249,10 @@ Required SKUs:
     * Refer to this article for more information regarding adding [**OmniScripts to a Lightning or Experience page**](https://docs.vlocity.com/en/Adding-an-LWC-OmniScript-to-a-Community-or-Lightning-Page.html) 
 
 <h2>Epic Direct Connection</h2>
+
+Required SKUs:
+* Health Cloud
+
 <h3>1. EHR Pre-Configuration Steps:</h3>
 
 * Ensure your EHR system's network is configured to accept traffic from your Health Cloud org.
