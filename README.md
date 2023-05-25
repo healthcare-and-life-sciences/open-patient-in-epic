@@ -321,7 +321,7 @@ Required SKUs:
 <h3>3. Configure the Accelerator</h3>
 
 
-* App Launcher > Integration Procedures > **CallEpicReceiveCommunicationAPI**
+* App Launcher > Integration Procedures > **EHRConnectDirect/ReceiveCommunication**
 	* Create a **New Version** of the Integration Procedure
 	* For the **HTTP Action** element, make the following changes:
 		* In the **Path** field, add your organization’s unique API domain name before the existing text. For example: https://**interconnect.makanahealth.com**/wcf/Epic.Common.GeneratedServices/Utility.svc/rest_2015/ReceiveCommunication
@@ -350,6 +350,9 @@ Required SKUs:
 
 * Click on *App Launcher* → Search for “OmniScripts”
     * Open the Epic Button OmniScript
+    * If not already deactivated, Deactivate the OmniScript.
+    * Click on the "Open Patient in Epic" Action button
+    * Change the Integration Procedure to EHRConnectDirect_ReceiveCommunication instead of EHRConnect_ReceiveCommunication. 
     * To configure different images or labels for the Context, select the Radio Button element in the OmniScript
 ![](/images/image3.png)
 * Click on each option title to configure the label and desired image. 
