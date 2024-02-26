@@ -17,7 +17,7 @@ The Accelerator gives the user a choice of context for which to view the patient
 * Log Phone Call
 * Chart - this represents a blank context which will trigger a default documentation activity configured by the organization.
 
-This Accelerator is compatible with both Epic ReceiveCommunication API directly or via MuleSoft. Instructions for configuring the accelerator for either method are included below. 
+This Accelerator is compatible with both Epic ReceiveCommunication API directly or via a middleware tool like MuleSoft. Instructions for configuring the accelerator for either method are included below. 
 
 ![](/images/image2.png)
 
@@ -128,7 +128,6 @@ There are 3 different ways to configure this accelerator based on your organizat
 * [Directly to Epic Interconnect](#Epic-Direct-Connection)
 
 <h2>MuleSoft Direct</h2>
-*Available starting June 5, 2023*
 
 Required SKUs:
 * Health Cloud
@@ -139,39 +138,35 @@ Required SKUs:
 * Complete the Setup steps for the [**Integrations Setup for Industry Integration Solutions**](https://help.salesforce.com/s/articleView?language=en_US&id=sf.industry_integration_solutions.htm&type=5)
 	* In the **Generic FHIR Client Setup**, enter the following information for the Epic EHR credentials
 		* **Authentication Protocol**: JSON Web Token
-		* **Base URL**: your Epic FHIR server’s base URL
-		* **Token URL**: your Epic FHIR server’s authentication URL
-		* **Client ID**: 43b0500b-ea80-41d4-be83-21230c837c15
-		* **Private Key** - import the Private Key which is included in the Accelerator download .zip folder  
-		* **Non-PRD Test Information**:
-			* **Endpoint**: [https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token](https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token)
-			* **Client ID**: fe0e3375-fffa-469b-8338-d5fe08f7d3b1
-			* Refer to the **Epic FHIR App**: Salesforce Health Cloud - Clinical Summary
+		* **Base URL**: your Epic API server’s base URL
+		* **Token URL**: your Epic API server’s authentication URL
+		* **Client ID**: The client ID of your API app or server. 
+		* **Private Key** - import the Private Key which is used to authenticate with your API app or server 
 
 <h3>2. Configure the Accelerator:</h3>
 
-Update the **CallEpicReceiveCommunicationAPI** Integration Procedure to use the MuleSoft Direct connection instead of Epic FHIR APIs directly:
+Update the **CallEpicReceiveCommunicationAPI** Integration Procedure to use the MuleSoft Direct connection:
 
 * App Launcher > Integration Procedures > CallEpicReceiveCommunicationAPI
 	* Create a **New Version** of the Integration Procedures
 	* For the **HTTP Action** element, make the following changes:
-		* In the **Path** field, remove the “/FHIR/R4” portion of the path such that the Path = /api/AllergyIntolerance (for example)
-		* Replace **Epic_Auth_JWT** with the name of the Named Credential resulting from the MuleSoft Direct setup above (e.g. **Health_generic_system_app**)
+		* In the **Path** field, adjust the value so that it refers to the endpoint of the ReceiveCommunication API. Do not include the domain of your API server.
+		* Replace **Epic_Auth_JWT** with the developer name of the Named Credential resulting from the MuleSoft Direct setup above (e.g. **Health_generic_system_app**)
 	* **Activate** your new Integration Procedure version
 
 <h4>Configure User and Patient API Input Parameters:</h4>
 
-* To configure the *User ID* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor
+* To configure the *User ID* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor. Refer to the ReceiveCommunication API details for more information.
 	* On the “*Output*” panel, set the *Extract JSON Path* to the User ID field which stores the User’s Epic User ID 
 	* By default, the DataRaptor uses the *FederationIdentifier* field on the User object in Salesforce.
 ![](/images/image5.png)
-* To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor
+* To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor. Refer to the ReceiveCommunication API details for more information.
 	* On the “*Output*” panel, set the *Extract JSON Path* to the Account field which stores the Epic patient ID
     * By default, this is set to *Account.HealthCloudGA__SourceSystemId__c* on the Account object.
 ![](/images/image6.png)
 <h4>Configure Additional API Parameters</h4>
 
-* To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure.
+* To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure. Refer to the ReceiveCommunication API details for more information.
    * Either deactivate or create a new version of the Integration Procedure to edit it.
    * Click on the SetAPIParameters and configure the values according to your business needs. For more information on parameters for the Receive Communication API, refer to the Epic documentation here: https://open.epic.com/Operational/ContactCenter
 ![](/images/image7.png)
@@ -181,11 +176,13 @@ Update the **CallEpicReceiveCommunicationAPI** Integration Procedure to use the 
 
 * Click on *App Launcher* → Search for “OmniScripts”
     * Open the Epic Button OmniScript
-    * To configure different images or labels for the Context, select the Radio Button element in the OmniScript
+    * Deactivate the OmniScript
+    * If the default images do not appear, click on the Radio Button element on the respective Step and click into one of the radio options. Click Save. 
+    * To remove an option, simply click to remove the radio option from the Radio Button Properties pane. See this article for more information: [OmniScripts Radio Element](https://help.salesforce.com/s/articleView?id=sf.os_omniscripts_radio_element_16936.htm&language=en_US&type=5).
 ![](/images/image3.png)
-* Click on each option title to configure the label and desired image. 
-	* Activate the OmniScript
-	* For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
+* Click on each option title to configure the label and desired image.
+* Activate the OmniScript
+* For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
 ![](/images/image4.png)
 * Add the installed OmniScript to the lightning page layout of your choosing. 
     * Refer to this article for more information regarding adding [**OmniScripts to a Lightning or Experience page**](https://docs.vlocity.com/en/Adding-an-LWC-OmniScript-to-a-Community-or-Lightning-Page.html) 
@@ -219,17 +216,17 @@ Required SKUs:
 
 <h4>Configure User and Patient API Input Parameters:</h4>
 
-* To configure the *User ID* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor
+* To configure the *User ID* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor. Refer to the ReceiveCommunication API details for more information.
 	* On the “*Output*” panel, set the *Extract JSON Path* to the User ID field which stores the User’s Epic User ID 
 	* By default, the DataRaptor uses the *FederationIdentifier* field on the User object in Salesforce.
 ![](/images/image5.png)
-* To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor
+* To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor. Refer to the ReceiveCommunication API details for more information.
 	* On the “*Output*” panel, set the *Extract JSON Path* to the Account field which stores the Epic patient ID
     * By default, this is set to *Account.HealthCloudGA__SourceSystemId__c* on the Account object.
 ![](/images/image6.png)
 <h4>Configure Additional API Parameters</h4>
 
-* To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure.
+* To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure. Refer to the ReceiveCommunication API details for more information.
    * Either deactivate or create a new version of the Integration Procedure to edit it.
    * Click on the SetAPIParameters and configure the values according to your business needs. For more information on parameters for the Receive Communication API, refer to the Epic documentation here: https://open.epic.com/Operational/ContactCenter
 ![](/images/image7.png)
@@ -239,11 +236,13 @@ Required SKUs:
 
 * Click on *App Launcher* → Search for “OmniScripts”
     * Open the Epic Button OmniScript
-    * To configure different images or labels for the Context, select the Radio Button element in the OmniScript
+    * Deactivate the OmniScript
+    * If the default images do not appear, click on the Radio Button element on the respective Step and click into one of the radio options. Click Save. 
+    * To remove an option, simply click to remove the radio option from the Radio Button Properties pane. See this article for more information: [OmniScripts Radio Element](https://help.salesforce.com/s/articleView?id=sf.os_omniscripts_radio_element_16936.htm&language=en_US&type=5).
 ![](/images/image3.png)
-* Click on each option title to configure the label and desired image. 
-	* Activate the OmniScript
-	* For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
+* Click on each option title to configure the label and desired image.
+* Activate the OmniScript
+* For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
 ![](/images/image4.png)
 * Add the installed OmniScript to the lightning page layout of your choosing. 
     * Refer to this article for more information regarding adding [**OmniScripts to a Lightning or Experience page**](https://docs.vlocity.com/en/Adding-an-LWC-OmniScript-to-a-Community-or-Lightning-Page.html) 
@@ -256,8 +255,8 @@ Required SKUs:
 <h3>1. EHR Pre-Configuration Steps:</h3>
 
 * Ensure your EHR system's network is configured to accept traffic from your Health Cloud org.
-* Install the Epic on FHIR App called “**Salesforce Health Cloud - Clinical Summary**” into your Epic organization. 
-	* **Client ID:** 43b0500b-ea80-41d4-be83-21230c837c15
+* Create an Epic on FHIR App and work with the Epic Vendor Services team to add the ReceiveCommunication API to the app's scope.
+* Note the non-PRD and PRD Client IDs of your app. 
 
 <h3>2. Salesforce Pre-Installation Steps:</h3>
 
@@ -282,9 +281,7 @@ Required SKUs:
 * Alternatively, you may create a new Apex Class manually by performing the following:
 	* Setup > Apex Classes > New
 	* Copy the entire code of the Apex Class in the salesforce-sfdx folder and paste in the new Apex Class editor and Save.
-* Import the keystore **FHIRDEMOKEYSTORE.jks** from .zip file. 
-	* Setup > **Certificates and Key Management** > Import from **Keystore**
-	* **Password**: salesforce1
+* Create an Import the keystore of the certificate that is used to authenticate your FHIR app. 
 
 
 <h4>Create a new Authentication Provider</h4>
@@ -293,11 +290,11 @@ Required SKUs:
     * Create a New Authentication Provider
         * Provider Type: **ClientCredentialJWT**
         * Name: Epic_JWT_Auth
-        * iss: 43b0500b-ea80-41d4-be83-21230c837c15
-        * sub: 43b0500b-ea80-41d4-be83-21230c837c15
-        * aud: set this to the API endpoint for authentication - either the MuleSoft API or Epic FHIR API - e.g., https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token
+        * iss: '<'The Client ID of your EpicFHIR App'>'
+        * sub: '<'The Client ID of your EpicFHIR App'>'
+        * aud: set this to the API endpoint for authentication - e.g., https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token
         * jti: salesforce
-        * cert: fhirdemo_cert
+        * cert: '<'The name of the cert that you imported via the keystore step above'>'
         * callback uri: https://YOURDOMAIN/services/authcallback/Epic_JWT_Auth
         * Execute Registration As: your system administrator User
 ![](/images/fcimage3.png)
@@ -321,26 +318,27 @@ Required SKUs:
 <h3>3. Configure the Accelerator</h3>
 
 
-* App Launcher > Integration Procedures > **EHRConnectDirect/ReceiveCommunication**
+* App Launcher > Integration Procedures > **CallEpicReceiveCommunicationAPI**
 	* Create a **New Version** of the Integration Procedure
 	* For the **HTTP Action** element, make the following changes:
-		* In the **Path** field, add your organization’s unique API domain name before the existing text. For example: https://**interconnect.makanahealth.com**/wcf/Epic.Common.GeneratedServices/Utility.svc/rest_2015/ReceiveCommunication
+		* In the **Path** field, add your organization’s unique API domain name before the existing text. For example: /wcf/Epic.Common.GeneratedServices/Utility.svc/rest_2015/ReceiveCommunication
+  		* In the Named Credential field, add the named credential developer name you created above. By default, it should be: Epic_Auth_JWT	
 		* Add any additional Input Keys and Values according to your organization’s requirements (e.g., authentication keys). Work with your Epic administrator to determine additional needs.
 
 ![](/images/image8.png)
 <h4>Configure User and Patient API Input Parameters:</h4>
 
-* To configure the *User ID* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor
+* To configure the *User ID* which is used in the Epic API, open the *GetUserIDForEHR* DataRaptor. Refer to the ReceiveCommunication API details for more information.
 	* On the “*Output*” panel, set the *Extract JSON Path* to the User ID field which stores the User’s Epic User ID 
 	* By default, the DataRaptor uses the *FederationIdentifier* field on the User object in Salesforce.
 ![](/images/image5.png)
-* To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor
+* To configure the *Patient ID Type* which is used in the Epic API, open the *GetPatientEHRId* DataRaptor. Refer to the ReceiveCommunication API details for more information.
 	* On the “*Output*” panel, set the *Extract JSON Path* to the Account field which stores the Epic patient ID
     * By default, this is set to *Account.HealthCloudGA__SourceSystemId__c* on the Account object.
 ![](/images/image6.png)
 <h4>Configure Additional API Parameters</h4>
 
-* To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure.
+* To configure additional API parameters, open the OpenEpicPatientAndContext Integration Procedure. Refer to the ReceiveCommunication API details for more information.
    * Either deactivate or create a new version of the Integration Procedure to edit it.
    * Click on the SetAPIParameters and configure the values according to your business needs. For more information on parameters for the Receive Communication API, refer to the Epic documentation here: https://open.epic.com/Operational/ContactCenter
 ![](/images/image7.png)
@@ -350,14 +348,13 @@ Required SKUs:
 
 * Click on *App Launcher* → Search for “OmniScripts”
     * Open the Epic Button OmniScript
-    * If not already deactivated, Deactivate the OmniScript.
-    * Click on the "Open Patient in Epic" Action button
-    * Change the Integration Procedure to EHRConnectDirect_ReceiveCommunication instead of EHRConnect_ReceiveCommunication. 
-    * To configure different images or labels for the Context, select the Radio Button element in the OmniScript
+    * Deactivate the OmniScript
+    * If the default images do not appear, click on the Radio Button element on the respective Step and click into one of the radio options. Click Save. 
+    * To remove an option, simply click to remove the radio option from the Radio Button Properties pane. See this article for more information: [OmniScripts Radio Element](https://help.salesforce.com/s/articleView?id=sf.os_omniscripts_radio_element_16936.htm&language=en_US&type=5).
 ![](/images/image3.png)
-* Click on each option title to configure the label and desired image. 
-	* Activate the OmniScript
-	* For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
+* Click on each option title to configure the label and desired image.
+* Activate the OmniScript
+* For more information regarding activating Omniscripts, please see this article: https://docs.vlocity.com/en/Activating-OmniScripts.html
 ![](/images/image4.png)
 * Add the installed OmniScript to the lightning page layout of your choosing. 
     * Refer to this article for more information regarding adding [**OmniScripts to a Lightning or Experience page**](https://docs.vlocity.com/en/Adding-an-LWC-OmniScript-to-a-Community-or-Lightning-Page.html) 
